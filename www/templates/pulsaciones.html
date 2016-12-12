@@ -1,0 +1,13 @@
+<ion-view title="Pulsaciones">
+    <ion-content scroll="false">
+      <center>
+      <div ng-class="{'bar bar-header bar-calm': state== 'connected', 'button button-outline button-dark': state=='disconnected' }" ng-click="create()">
+        <h2 class="texto-centro" >
+           {{pulseBPM}} BPM
+        </h2>
+      </div>
+    </center>
+    </ion-content>
+  <div class="bar bar-footer bar-positive" ng-click="disconnect()">
+  <div class="title">{{message}}</div>
+</ion-view>

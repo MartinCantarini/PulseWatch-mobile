@@ -1,0 +1,36 @@
+<ion-view title="Inicio" cache-view="false"><!---->
+  <ion-content>
+  	<div class="list">
+	    <a class="item item-avatar" ui-sref="pulsaciones" >
+	      <img src="img/pulsaciones.png">
+	      <h2>Monitor</h2>
+	      <p>Controla tus pulsaciones en tiempo real</p>
+	    </a>
+	    <a class="item item-avatar" ui-sref="alertas" >
+	      <img src="img/alertas.png">
+	      <h2>Alerta</h2>
+	      <p>Recibi alertas cuando tus pulsaciones superen un rango específico</p>
+	    </a>
+	    <a class="item item-avatar" ui-sref="estadisticas">
+	      <img src="img/estadisticas.png">
+	      <h2>Estadíticas</h2>
+	      <p>Obten estadísticas de tus pulsaciones</p>
+	    </a>
+	    <a class="item item-avatar" ui-sref="ayuda">
+	      <img src="img/about.png">
+	      <h2>Ayuda</h2>
+	      <p>Información sobre la aplicación</p>
+	    </a>
+	</div>
+	<div class="list">
+		<div ng-controller="LoginCtrl">
+		    <a class="item item-avatar" ng-click="logout()">
+		      <img src="img/logout.png">
+		      <h2>Salir</h2>
+		      <p></p>
+		    </a>
+	    </div>
+	</div>
+
+  </ion-content>
+</ion-view>

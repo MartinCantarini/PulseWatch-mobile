@@ -1,0 +1,12 @@
+<ion-view title="Alerta">
+  <ion-content>
+  <p>Estado: {{alertaEstado}} <button ng-click="setEstadoAlerta()">Cambiar</button></p>
+  <div class="list list-inset">
+  	<label class="item item-input">
+  		<input type="text" ng-model="limitValue" placeholder="Ingresar BPM límite" />
+  	</label>
+  </div>
+  	<input  class="button button-block button-calm" ng-click="setValueAlerta(limitValue)" value="Continuar"/>
+    <div class="list">
+  </ion-content>
+</ion-view>

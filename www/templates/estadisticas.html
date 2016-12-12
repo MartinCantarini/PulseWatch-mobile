@@ -1,0 +1,22 @@
+<ion-view title="Estadisticas">
+  <ion-content>
+  <h1>Ultimas </h1>
+  <!---<ul ng-repeat="item in mediciones">
+    <li>            
+      {{item.id}}: {{item.value}}: {{item.created_at}}
+    </li>
+  </ul>-->
+  <div class="row">
+  	  <div class="col col-25"">Nro.</div>
+	  <div class="col col-25"">Valor</div>
+	  <div class="col col-50"">Fechas</div>
+  </div>
+  <div ng-repeat="item in mediciones" style="background-color: #FFFFFF;">
+  	<div class="row">
+	  <div class="col col-25"">{{item.id}}</div>
+	  <div class="col col-25"">.{{item.value}} BPM</div>
+	  <div class="col col-50"">{{item.created_at}}</div>
+	</div>
+  </div>   
+  </ion-content>
+</ion-view>
