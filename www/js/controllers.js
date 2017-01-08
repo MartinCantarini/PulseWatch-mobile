@@ -1,15 +1,24 @@
-var macAddress= "20:15:10:12:42:20";
+var macAddress= "20:15:10:08:39:70";
 angular.module('starter.controllers', [])
 .controller('LoginCtrl', function($scope,$http,$state) {
     $scope.data = {};
     $scope.login = function() {
         if($scope.data.username!=null && $scope.data.password!=null){
-          //$http.get("http://192.168.1.108:80/users/login?email="+$scope.data.username+"&password="+$scope.data.username)
-          $http.get("http://192.168.1.108:80/users/login?email=admin@admin.com&password=123456")
+          
+          var email=$scope.data.username;
+          var password=$scope.data.password;
+          //alert(email);
+          //alert(password);
+          var config={
+            params:{
+              email: email,
+              password: password
+            }
+          }
+          $http.get('http://pulsewatch.herokuapp.com/users/login',config)
           .success(function(data){
             user_id=data.user_id;
             window.localStorage['userid'] = user_id;
-            alert("redirect");
             $state.go('home');
           })
           .error(function(err){
@@ -25,15 +34,44 @@ angular.module('starter.controllers', [])
     $scope.logout = function() {
         window.localStorage.clear();
         alert("Hasta luego!");
-        $state.go('home');    
+        $state.go('login');    
     }
     $scope.redirectLogout = function() {
         $state.go('logup');    
     }
     $scope.logup = function() {
         if($scope.data.username!=null && $scope.data.name!=null && $scope.data.password!=null){
-          alert("Enviando...");
+          var email=$scope.data.username;
+          var password=$scope.data.password;
+          var name=$scope.data.name;
+          var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          if(re.test(email)){  
+          //alert(email);
+          //alert(password);
+          var config={
+            params:{
+              email: email,
+              password: password,
+              name: name
+            }
+          }
+          $http.get('http://pulsewatch.herokuapp.com/users/logup',config)
+          .success(function(data){
+            alert("Bienvenido"+name+"!");
+            user_id=data.user_id;
+            window.localStorage['userid'] = user_id;
+            $state.go('home');
+          })
+          .error(function(err){
+            alert(err.errors);
+            console.log(err.errors);
+          });
+        }
+        else{
+          alert("Ingrese un email correcto");
           $scope.data={};
+          $state.go('logup');
+        }
         }
         else{
           alert("Debe completar todos los campos");
@@ -44,19 +82,26 @@ angular.module('starter.controllers', [])
 })
 .controller('HomeCtrl', function($scope,$state){
     //window.localStorage.clear();
-    window.localStorage['userid']=1;
+    //window.localStorage['userid']=1;
     var userid = window.localStorage['userid'];
     if (userid==null){
       alert("Debe iniciar sesión para utilizar la aplicación");
       $state.go('login');   
     }
+
 })
 .controller('EstadisticaCtrl', function($scope,$http,$state) {
     // $scope.getMediciones=function(){
-      
       var userid2 = window.localStorage['userid'];
-      
-      $http.get("http://192.168.1.108:80/mesures/?user_id="+userid2)
+
+
+      var config={
+            params:{
+              user_id: userid2
+            }
+          }
+
+      $http.get("http://pulsewatch.herokuapp.com/mesures/statics/",config)
         .success(function(data){
           $scope.mediciones = data;
           $state.go('estadisticas');  
@@ -68,25 +113,13 @@ angular.module('starter.controllers', [])
         });  
      //}
 })
-.controller('PulseApp', function($scope,$ionicPopup,$http) {
+.controller('PulseApp', function($scope,$ionicPopup,$http,$cordovaMedia) {
   $scope.state="disconnected";
   $scope.pulseBPM="Comenzar";
   $scope.message="";
+  $scope.alertaOK="false";
   $scope.alertaEstado=window.localStorage['alertaEstado'];
   $scope.alertaValor=window.localStorage['alertaValor'];
-  /*$scope.create=function(){
-    alert("hola");
-    var userid2 = window.localStorage['userid'];
-      
-      $http.get("http://192.168.1.108:80/mesures/create_mesure?data=5&id="+userid2)
-        .success(function(data){
-          window.location.href = '#/estadisticas';
-        })
-        .error(function(err){
-          alert(err.errors);
-          console.log(err.errors);
-        });
-  }*/
 
   $scope.connect=function(){
     bluetoothSerial.connect(
@@ -98,6 +131,9 @@ angular.module('starter.controllers', [])
   }
   $scope.disconnect=function(){
     if ($scope.state=="connected"){
+      $scope.state=null;
+      $scope.alertaOK="false";  
+      $scope.pulseBPM="Comenzar"; 
       bluetoothSerial.disconnect(
                 $scope.closePort,     // stop listening to the port
                 $scope.showError
@@ -118,24 +154,45 @@ angular.module('starter.controllers', [])
           );
   }
   $scope.openPort=function(){
-    console.log("success");
+    var src = "/android_asset/www/js/song.mp3";
+    var media = $cordovaMedia.newMedia(src);
+    var src_alerta = "/android_asset/www/js/alert.mp3";
+    var media_alerta = $cordovaMedia.newMedia(src_alerta);
+    $scope.alerta=null;
+    $scope.alertaOK="false";
     $scope.state="connected";
     $scope.pulseBPM="0 "+"BMP";
-    console.log("por subscribirme");
     $scope.message="Desconectar";
     $scope.$apply();
+    media.play();
+    var user_id=window.localStorage['userid'];
     bluetoothSerial.subscribe('\n', function (data) {
             $scope.pulseBPM=data;
-            if($scope.getEstadoAlerta!=null && $scope.getValueAlerta!==null && scope.pulseBPM > getValueAlerta){
-              alert("Valor límite!");
+            if(($scope.getEstadoAlerta()=="Activado") && (parseInt($scope.pulseBPM) > 100) && ($scope.alertaOK=="false")){
+              $scope.alerta="VALOR ALCANZADO";
+              $scope.alertaOK="true";
+              media_alerta.play();
             }
-            $http({
-            url: "http://192.168.0.102:3000/mesures/create_mesure/",
-            method: "GET",
-            params: {data: $scope.pulseBPM}
+            else{
+              $scope.alerta=null;
+            }
+            //var medicion=$scope.pulseBPM;
+            var config={
+            params:{
+              data: data,
+              id: user_id
+            }
+            }
+            $http.get('http://pulsewatch.herokuapp.com/mesures/create_mesure/',config)
+            .success(function(data){
+              
+            })
+            .error(function(err){
+          
             });
+            //$http.get('http://pulsewatch.herokuapp.com/mesures/create_mesure/',config);
             $scope.$apply();
-            //console.log(data);
+            //console.log(data);*/
         }, function(e){console.log(e); console.log("errorr");});
   }
   $scope.showError=function(error){

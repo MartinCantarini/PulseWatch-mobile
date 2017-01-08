@@ -1,17 +1,18 @@
 <ion-view title="Estadisticas">
   <ion-content>
-  <h1>Ultimas </h1>
-  <!---<ul ng-repeat="item in mediciones">
-    <li>            
-      {{item.id}}: {{item.value}}: {{item.created_at}}
-    </li>
-  </ul>-->
+  <div class="row">
+    <div class="col">Promedio último minuto: {{mediciones.last_minute_mesures_prom}}</div>
+    <div class="col">Promedio últimos 5 minuto: {{mediciones.last_5_minutes_mesures_prom}}</div>
+    <div class="col">Promedio histórico: {{mediciones.all_mesures_prom}}</div>
+    <div class="col">Medición más alta: {{mediciones.max_mesure}}</div>
+  </div>
+  <h1>Ultimas</h1>
   <div class="row">
   	  <div class="col col-25"">Nro.</div>
 	  <div class="col col-25"">Valor</div>
 	  <div class="col col-50"">Fechas</div>
   </div>
-  <div ng-repeat="item in mediciones" style="background-color: #FFFFFF;">
+  <div ng-repeat="item in mediciones.mesures" style="background-color: #FFFFFF;">
   	<div class="row">
 	  <div class="col col-25"">{{item.id}}</div>
 	  <div class="col col-25"">.{{item.value}} BPM</div>
