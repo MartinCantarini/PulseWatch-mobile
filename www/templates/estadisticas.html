@@ -8,16 +8,15 @@
   </div>
   <h1>Ultimas</h1>
   <div class="row">
-  	  <div class="col col-25"">Nro.</div>
 	  <div class="col col-25"">Valor</div>
-	  <div class="col col-50"">Fechas</div>
+	  <div class="col col-75"">Fechas</div>
   </div>
   <div ng-repeat="item in mediciones.mesures" style="background-color: #FFFFFF;">
   	<div class="row">
-	  <div class="col col-25"">{{item.id}}</div>
-	  <div class="col col-25"">.{{item.value}} BPM</div>
-	  <div class="col col-50"">{{item.created_at}}</div>
+	  <div class="col col-25"">{{item.value}} BPM</div>
+	  <div class="col col-75"">{{item.created_at | date: "dd/MM/y - HH:mm:ss" }}</div>
 	</div>
-  </div>   
+  </div> 
+  <script src="i18n/angular-locale_es-es.js"></script>  
   </ion-content>
 </ion-view>
