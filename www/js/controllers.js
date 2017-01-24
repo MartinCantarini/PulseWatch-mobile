@@ -58,12 +58,13 @@ angular.module('starter.controllers', [])
           $http.get('http://pulsewatch1.herokuapp.com/users/logup',config)
           .success(function(data){
             alert("Bienvenido "+name+"!");
-            user_id=data.user_id;
+            user_id = data.id;
             window.localStorage['userid'] = user_id;
             $state.go('home');
           })
           .error(function(err){
-            alert(err.errors);
+            alert("Problemas con el servidor, por favor intente en unos minutos");
+            $state.go('logup');
           });
         }
         else{
